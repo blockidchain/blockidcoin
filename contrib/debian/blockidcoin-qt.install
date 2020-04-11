@@ -1,0 +1,6 @@
+usr/local/bin/blockidcoin-qt usr/bin
+share/pixmaps/blockidcoin32.xpm usr/share/pixmaps
+share/pixmaps/blockidcoin16.xpm usr/share/pixmaps
+share/pixmaps/blockidcoin128.png usr/share/pixmaps
+debian/blockidcoin-qt.desktop usr/share/applications
+debian/blockidcoin-qt.protocol usr/share/kde4/services/
