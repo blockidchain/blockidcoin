@@ -1,0 +1,8 @@
+/usr/bin/blockidcoin-cli		--	gen_context(system_u:object_r:blockidcoin_exec_t,s0)
+/usr/sbin/blockidcoind		--	gen_context(system_u:object_r:blockidcoin_exec_t,s0)
+/usr/lib(64)?/blockidcoin/blockidcoind		--	gen_context(system_u:object_r:blockidcoin_exec_t,s0)
+
+/etc/blockidcoin(/.*)?		gen_context(system_u:object_r:blockidcoin_conf_t,s0)
+/var/lib/blockidcoin(/.*)?		gen_context(system_u:object_r:blockidcoin_var_lib_t,s0)
+
+(/var)?/run/blockidcoind(/.*)?   gen_context(system_u:object_r:blockidcoin_var_run_t,s0)

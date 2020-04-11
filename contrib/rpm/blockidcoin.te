@@ -1,0 +1,81 @@
+policy_module(blockidcoin, 1.100.1)
+
+########################################
+#
+# Declarations
+#
+
+type blockidcoin_t;
+type blockidcoin_exec_t;
+init_daemon_domain(blockidcoin_t, blockidcoin_exec_t)
+
+permissive blockidcoin_t;
+
+type blockidcoin_initrc_exec_t;
+init_script_file(blockidcoin_initrc_exec_t)
+
+type blockidcoin_conf_t;
+files_type(blockidcoin_conf_t)
+
+type blockidcoin_var_lib_t;
+files_type(blockidcoin_var_lib_t)
+
+type blockidcoin_var_run_t;
+files_type(blockidcoin_var_run_t)
+
+type blockidcoin_port_t;
+corenet_port(blockidcoin_port_t)
+
+########################################
+#
+# blockidcoin local policy
+#
+allow blockidcoin_t self:process { fork };
+
+allow blockidcoin_t self:fifo_file rw_fifo_file_perms;
+allow blockidcoin_t self:unix_stream_socket create_stream_socket_perms;
+
+manage_dirs_pattern(blockidcoin_t, blockidcoin_conf_t, blockidcoin_conf_t)
+manage_files_pattern(blockidcoin_t, blockidcoin_conf_t, blockidcoin_conf_t)
+
+manage_dirs_pattern(blockidcoin_t, blockidcoin_var_lib_t, blockidcoin_var_lib_t)
+manage_files_pattern(blockidcoin_t, blockidcoin_var_lib_t, blockidcoin_var_lib_t)
+files_var_lib_filetrans(blockidcoin_t, blockidcoin_var_lib_t, { dir file })
+
+manage_dirs_pattern(blockidcoin_t, blockidcoin_var_run_t, blockidcoin_var_run_t)
+manage_files_pattern(blockidcoin_t, blockidcoin_var_run_t, blockidcoin_var_run_t)
+
+sysnet_dns_name_resolve(blockidcoin_t)
+corenet_all_recvfrom_unlabeled(blockidcoin_t)
+
+allow blockidcoin_t self:tcp_socket create_stream_socket_perms;
+corenet_tcp_sendrecv_generic_if(blockidcoin_t)
+corenet_tcp_sendrecv_generic_node(blockidcoin_t)
+corenet_tcp_sendrecv_all_ports(blockidcoin_t)
+corenet_tcp_bind_generic_node(blockidcoin_t)
+
+gen_require(`
+    type blockidcoin_port_t;
+')
+allow blockidcoin_t blockidcoin_port_t:tcp_socket name_bind;
+
+gen_require(`
+    type blockidcoin_port_t;
+')
+allow blockidcoin_t blockidcoin_port_t:tcp_socket name_connect;
+
+domain_use_interactive_fds(blockidcoin_t)
+
+files_read_etc_files(blockidcoin_t)
+
+miscfiles_read_localization(blockidcoin_t)
+
+sysnet_dns_name_resolve(blockidcoin_t)
+
+allow blockidcoin_t blockidcoin_exec_t:file execute_no_trans;
+allow blockidcoin_t self:process setsched;
+corecmd_exec_ls(blockidcoin_t)
+corenet_tcp_connect_http_port(blockidcoin_t)
+dev_read_urand(blockidcoin_t)
+fs_getattr_xattr_fs(blockidcoin_t)
+kernel_read_system_state(blockidcoin_t)

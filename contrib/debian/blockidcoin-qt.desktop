@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=BlockidCoin Core
+Comment=BlockidCoin P2P Cryptocurrency
+Comment[fr]=BlockidCoin, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=BlockidCoin, eşten eşe kriptografik sanal para birimi
+Exec=blockidcoin-qt %u
+Terminal=false
+Type=Application
+Icon=blockidcoin128
+MimeType=x-scheme-handler/blockidcoin;
+Categories=Office;Finance;
+StartupWMClass=BlockidCoin-qt
