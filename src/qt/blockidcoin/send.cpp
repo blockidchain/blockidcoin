@@ -148,6 +148,8 @@ void SendWidget::refreshAmounts() {
 
     nDisplayUnit = walletModel->getOptionsModel()->getDisplayUnit();
 
+    ui->labelAmountSend->setText(GUIUtil::formatBalance(total, nDisplayUnit));
+
     CAmount totalAmount = 0;
     if (CoinControlDialog::coinControl->HasSelected()){
         // Set remaining balance to the sum of the coinControl selected inputs
