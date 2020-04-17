@@ -583,7 +583,9 @@ bool CMasternodeBlockPayees::IsTransactionValid(const CTransaction& txNew)
 
     std::string strPayeesPossible = "";
 
-    CAmount nReward = GetBlockValue(nBlockHeight);
+    // 100 blocks transition period for smoothness
+    CAmount prevReward = GetBlockValue((nBlockHeight > 51) ? (nBlockHeight - 50) : nBlockHeight);
+    CAmount nextReward = GetBlockValue(nBlockHeight + 50);
 
     if (sporkManager.IsSporkActive(SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT)) {
         // Get a stable number of masternodes by ignoring newly activated (< 8000 sec old) masternodes
@@ -596,7 +598,9 @@ bool CMasternodeBlockPayees::IsTransactionValid(const CTransaction& txNew)
         nMasternode_Drift_Count = mnodeman.size() + Params().MasternodeCountDrift();
     }
 
-    CAmount requiredMasternodePayment = GetMasternodePayment(nBlockHeight, nReward, nMasternode_Drift_Count, txNew.HasZerocoinSpendInputs());
+    // 100 blocks transition period for smoothness
+    CAmount prevMasternodePayment = GetMasternodePayment(((nBlockHeight > 51) ? (nBlockHeight - 50) : nBlockHeight), prevReward, nMasternode_Drift_Count, txNew.HasZerocoinSpendInputs());
+    CAmount nextMasternodePayment = GetMasternodePayment(nBlockHeight + 50, nextReward, nMasternode_Drift_Count, txNew.HasZerocoinSpendInputs());
 
     //require at least 6 signatures
     for (CMasternodePayee& payee : vecPayments)
@@ -610,11 +614,11 @@ bool CMasternodeBlockPayees::IsTransactionValid(const CTransaction& txNew)
         bool found = false;
         for (CTxOut out : txNew.vout) {
             if (payee.scriptPubKey == out.scriptPubKey) {
-                if(out.nValue == requiredMasternodePayment)
+                if(out.nValue == prevMasternodePayment || out.nValue == nextMasternodePayment)
                     found = true;
                 else
-                    LogPrintf("%s : Masternode payment value (%s) different from required value (%s).\n",
-                            __func__, FormatMoney(out.nValue).c_str(), FormatMoney(requiredMasternodePayment).c_str());
+                    LogPrintf("%s : Masternode payment value (%s) different from required value (%s or %s).\n",
+                            __func__, FormatMoney(out.nValue).c_str(), FormatMoney(prevMasternodePayment).c_str(), FormatMoney(nextMasternodePayment).c_str());
             }
         }
 
@@ -633,7 +637,7 @@ bool CMasternodeBlockPayees::IsTransactionValid(const CTransaction& txNew)
         }
     }
 
-    LogPrint("masternode","CMasternodePayments::IsTransactionValid - Missing required payment of %s to %s\n", FormatMoney(requiredMasternodePayment).c_str(), strPayeesPossible.c_str());
+    LogPrint("masternode","CMasternodePayments::IsTransactionValid - Missing required payment of %s to %s\n", FormatMoney(prevMasternodePayment).c_str(), strPayeesPossible.c_str());
     return false;
 }
 
