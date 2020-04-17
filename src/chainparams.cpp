@@ -252,24 +252,6 @@ public:
         genesis.nBits = 0x1e0ffff0;
         genesis.nNonce = 87229;
 
-/*
-        genesis.nNonce = 99999;
-        printf("Searching genesis ...");
-
-        while(!DoubleCheckProofOfWork(genesis.GetHash(), genesis.nBits))  {
-            genesis.nNonce--;
-
-            if (genesis.nNonce == 0) {
-                printf("Nonce wrapped, shifting time");
-                genesis.nTime++;
-		genesis.nNonce = 99999;
-            }
-        }
-
-        printf("genesis.nTime = %u \n", genesis.nTime);
-        printf("genesis.nNonce = %u \n", genesis.nNonce);
-        printf("genesis.GetHash = %s\n", genesis.GetHash().ToString().c_str());
-*/
         hashGenesisBlock = genesis.GetHash();
 
         assert(hashGenesisBlock == uint256("0x0000084fa44e813d62c60d1443dd86164d7cea08e14420353c6c9c5e8c9a743e"));
