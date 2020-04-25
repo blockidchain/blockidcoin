@@ -479,6 +479,10 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageOpt("-maxtxfee=<amt>", strprintf(_("Maximum total fees to use in a single wallet transaction, setting too low may abort large transactions (default: %s)"),
         FormatMoney(maxTxFee)));
     strUsage += HelpMessageOpt("-upgradewallet", _("Upgrade wallet to latest format") + " " + _("on startup"));
+    strUsage += HelpMessageOpt("-usehd", _("Use hierarchical deterministic key generation (HD) after bip39/bip44. Only has effect during wallet creation/first start") + " " + strprintf(_("(default: %u)"), DEFAULT_USE_HD_WALLET));
+    strUsage += HelpMessageOpt("-mnemonic", _("User defined mnemonic for HD wallet (bip39). Only has effect during wallet creation/first start (default: randomly generated)"));
+    strUsage += HelpMessageOpt("-mnemonicpassphrase", _("User defined memonic passphrase for HD wallet (bip39). Only has effect during wallet creation/first start (default: empty string)"));
+    strUsage += HelpMessageOpt("-hdseed", _("User defined seed for HD wallet (should be in hex). Only has effect during wallet creation/first start (default: randomly generated)"));    
     strUsage += HelpMessageOpt("-wallet=<file>", _("Specify wallet file (within data directory)") + " " + strprintf(_("(default: %s)"), "wallet.dat"));
     strUsage += HelpMessageOpt("-walletnotify=<cmd>", _("Execute command when a wallet transaction changes (%s in cmd is replaced by TxID)"));
     if (mode == HMM_BITCOIN_QT)
@@ -911,6 +915,12 @@ bool AppInit2()
             InitError(_("Invalid amount for -reservebalance=<amount>"));
             return false;
         }
+    }
+
+    if (mapArgs.count("-hdseed") && IsHex(GetArg("-hdseed", "not hex")) && (mapArgs.count("-mnemonic") || mapArgs.count("-mnemonicpassphrase"))) {
+        mapArgs.erase("-mnemonic");
+        mapArgs.erase("-mnemonicpassphrase");
+        LogPrintf("%s: parameter interaction: can't use -hdseed and -mnemonic/-mnemonicpassphrase together, will prefer -seed\n", __func__);
     }
 
     // Make sure enough file descriptors are available
@@ -1716,10 +1726,21 @@ bool AppInit2()
         }
 
         if (fFirstRun) {
+
+            if (GetBoolArg("-usehd", DEFAULT_USE_HD_WALLET) && !pwalletMain->IsHDEnabled()) {
+                if (GetArg("-mnemonicpassphrase", "").size() > 256)
+                    return InitError(_("Mnemonic passphrase is too long, must be at most 256 characters"));
+                // generate a new master key
+                pwalletMain->GenerateNewHDChain();
+
+                // ensure this wallet.dat can only be opened by clients supporting HD
+                pwalletMain->SetMinVersion(FEATURE_HD);
+            }
+
             // Create new keyUser and set as default key
             CPubKey newDefaultKey;
             // Top up the keypool
-            if (!pwalletMain->TopUpKeyPool()) {
+            if (!pwalletMain->TopUpKeyPool()) { // TODO: Baggins musime kuknut tento shiet s keys :D ! // if (pwalletMain->GetKeyFromPool(newDefaultKey, false))
                 // Error generating keys
                 InitError(_("Unable to generate initial key") += "\n");
                 return error("%s %s", __func__ , "Unable to generate initial key");
@@ -1727,6 +1748,18 @@ bool AppInit2()
 
             pwalletMain->SetBestChain(chainActive.GetLocator());
         }
+        else if (mapArgs.count("-usehd")) {
+            bool useHD = GetBoolArg("-usehd", DEFAULT_USE_HD_WALLET);
+            if (pwalletMain->IsHDEnabled() && !useHD)
+                return InitError(strprintf(_("Error loading %s: You can't disable HD on a already existing HD wallet"), strWalletFile));
+            if (!pwalletMain->IsHDEnabled() && useHD)
+                return InitError(strprintf(_("Error loading %s: You can't enable HD on a already existing non-HD wallet"), strWalletFile));
+        }
+
+        // Warn user every time he starts non-encrypted HD wallet
+        if ((GetBoolArg("-usehd", DEFAULT_USE_HD_WALLET) || pwalletMain->IsHDEnabled()) && !pwalletMain->IsLocked()) {
+            InitWarning(_("Make sure to encrypt your wallet and delete all non-encrypted backups after you verified that wallet works!"));
+        }        
 
         LogPrintf("Init errors: %s\n", strErrors.str());
         LogPrintf("Wallet completed loading in %15dms\n", GetTimeMillis() - nWalletStartTime);
@@ -1989,9 +2022,15 @@ bool AppInit2()
     LogPrintf("mapBlockIndex.size() = %u\n", mapBlockIndex.size());
     LogPrintf("chainActive.Height() = %d\n", chainActive.Height());
 #ifdef ENABLE_WALLET
-    LogPrintf("setKeyPool.size() = %u\n", pwalletMain ? pwalletMain->setKeyPool.size() : 0);
-    LogPrintf("mapWallet.size() = %u\n", pwalletMain ? pwalletMain->mapWallet.size() : 0);
-    LogPrintf("mapAddressBook.size() = %u\n", pwalletMain ? pwalletMain->mapAddressBook.size() : 0);
+    if (pwalletMain) {
+        LOCK(pwalletMain->cs_wallet);
+        LogPrintf("setExternalKeyPool.size() = %u\n",   pwalletMain->KeypoolCountExternalKeys());
+        LogPrintf("setInternalKeyPool.size() = %u\n",   pwalletMain->KeypoolCountInternalKeys());
+        LogPrintf("mapWallet.size() = %u\n",            pwalletMain->mapWallet.size());
+        LogPrintf("mapAddressBook.size() = %u\n",       pwalletMain->mapAddressBook.size());
+    } else {
+        LogPrintf("wallet is NULL\n");
+    }
 #endif
 
     if (GetBoolArg("-listenonion", DEFAULT_LISTEN_ONION))
