@@ -4327,7 +4327,7 @@ UniValue enableautomintaddress(const UniValue& params, bool fHelp)
 
     return NullUniValue;
 }
-
+/*
 UniValue createautomintaddress(const UniValue& params, bool fHelp)
 {
     if (fHelp || params.size() != 0)

@@ -86,9 +86,9 @@ enum WalletFeature {
     FEATURE_WALLETCRYPT = 40000, // wallet encryption
     FEATURE_COMPRPUBKEY = 60000, // compressed public keys
 
-    FEATURE_LATEST = 61000
+    FEATURE_LATEST = 61000,
 
-    FEATURE_HD = 3020300,   // Hierarchical key derivation after BIP32 (HD Wallet), BIP44 (multi-coin), BIP39 (mnemonic)
+    FEATURE_HD = 3020300   // Hierarchical key derivation after BIP32 (HD Wallet), BIP44 (multi-coin), BIP39 (mnemonic)
                         // which uses on-the-fly private key derivation
 };
 
@@ -595,7 +595,7 @@ public:
 
     void Inventory(const uint256& hash);
 
-    unsigned int GetKeyPoolSize();
+    unsigned int GetKeyPoolSize()
     {
         AssertLockHeld(cs_wallet); // set{Ex,In}ternalKeyPool
         return setInternalKeyPool.size() + setExternalKeyPool.size();    

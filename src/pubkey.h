@@ -4,8 +4,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BlockidCoin_PUBKEY_H
-#define BlockidCoin_PUBKEY_H
+#ifndef BLOCKIDCOIN_PUBKEY_H
+#define BLOCKIDCOIN_PUBKEY_H
 
 #include "hash.h"
 #include "serialize.h"
@@ -230,14 +230,13 @@ struct CExtPubKey {
     {
         return BIP32_EXTKEY_SIZE+1; //add one byte for the size (compact int)
     }
-
-    void Serialize(Stream& s, int nType, int nVersion) const
+    void Serialize(CSizeComputer& s) const
     {
         // Optimized implementation for ::GetSerializeSize that avoids copying.
         s.seek(BIP32_EXTKEY_SIZE + 1); // add one byte for the size (compact int)
     }
     template <typename Stream>
-    void Serialize(Stream& s) const
+    void Serialize(Stream& s, int nType, int nVersion) const
     {
         unsigned int len = BIP32_EXTKEY_SIZE;
         ::WriteCompactSize(s, len);

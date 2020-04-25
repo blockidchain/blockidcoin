@@ -8,6 +8,8 @@
 #include <QWidget>
 #include "qt/blockidcoin/pwidget.h"
 #include "qt/blockidcoin/lockunlock.h"
+#include "qt/walletmodel.h"
+
 #include "amount.h"
 #include <QTimer>
 #include <QProgressBar>
@@ -33,6 +35,8 @@ public:
 
     void loadWalletModel() override;
     void loadClientModel() override;
+    void hdEnabledStatusChanged(int hdEnabled);
+
 
     void encryptWallet();
 public slots:

@@ -121,7 +121,7 @@ PairResult CWallet::getNewAddress(CBitcoinAddress& ret, const std::string addres
 
     CPubKey newKey;
     // Get a key
-    if (!GetKeyFromPool(newKey)) {
+    if (false) {
         // inform the user to top-up the keypool or unlock the wallet
         return PairResult(false, new std::string(
                 "Keypool ran out, please call keypoolrefill first, or unlock the wallet."));
@@ -337,7 +337,7 @@ int64_t CWallet::GetKeyCreationTime(const CBitcoinAddress& address)
     }
     return 0;
 }
-
+/*
 CBitcoinAddress CWallet::GenerateNewAutoMintKey()
 {
     CBitcoinAddress btcAddress;
@@ -348,7 +348,7 @@ CBitcoinAddress CWallet::GenerateNewAutoMintKey()
     setAutoConvertAddresses.emplace(btcAddress);
     return btcAddress;
 }
-
+*/
 bool CWallet::AddKeyPubKey(const CKey& secret, const CPubKey& pubkey)
 {
     AssertLockHeld(cs_wallet); // mapKeyMetadata
@@ -3344,16 +3344,16 @@ bool CWallet::HasDelegator(const CTxOut& out) const
      {
          LOCK(cs_wallet);
          CWalletDB walletdb(strWalletFile);
-         BOOST_FOREACH(int64_t nIndex, setInternalKeyPool) {
+         for (int64_t nIndex : setInternalKeyPool) {
              walletdb.ErasePool(nIndex);
          }
          setInternalKeyPool.clear();
-         BOOST_FOREACH(int64_t nIndex, setExternalKeyPool) {
+         for (int64_t nIndex : setExternalKeyPool) {
              walletdb.ErasePool(nIndex);
          }
          setExternalKeyPool.clear();
 
-        if (!TopUpKeyPool())
+        if (!TopUpKeyPool()) 
             return false;
 
                  LogPrintf("CWallet::NewKeyPool rewrote keypool\n");
@@ -3386,7 +3386,7 @@ bool CWallet::TopUpKeyPool(unsigned int kpSize)
         if (kpSize > 0)
             nTargetSize = kpSize;
         else
-            nTargetSize = max(GetArg("-keypool", DEFAULT_KEYPOOL_SIZE), (int64_t) 0);
+            nTargetSize = std::max(GetArg("-keypool", DEFAULT_KEYPOOL_SIZE), (int64_t) 0);
 
             // count amount of available keys (internal, external)
             // make sure the keypool of external and internal keys fits the user selected target (-keypool)
@@ -3418,7 +3418,7 @@ bool CWallet::TopUpKeyPool(unsigned int kpSize)
                 }
                 // TODO: implement keypools for all accounts?
                 if (!walletdb.WritePool(nEnd, CKeyPool(GenerateNewKey(0, fInternal), fInternal)))
-                    throw runtime_error("TopUpKeyPool(): writing generated key failed");
+                    throw std::runtime_error("TopUpKeyPool(): writing generated key failed");
 
                 if (fInternal) {
                     setInternalKeyPool.insert(nEnd);
@@ -3442,7 +3442,7 @@ void CWallet::ReserveKeyFromKeyPool(int64_t& nIndex, CKeyPool& keypool, bool fIn
     {
         LOCK(cs_wallet);
 
-        if (!IsLocked())
+        if (!IsLocked()) 
             TopUpKeyPool();
 
         fInternal = fInternal && IsHDEnabled();
@@ -3723,11 +3723,12 @@ void CReserveKey::ReturnKey()
 
 static void LoadReserveKeysToSet(std::set<CKeyID>& setAddress, const std::set<int64_t>& setKeyPool, CWalletDB& walletdb)
 {
-    for (const int64_t& id, setKeyPool)
+    for (const int64_t& id : setKeyPool)
     {
         CKeyPool keypool;
-        if (!walletdb.ReadPool(id, keypool))
-            throw runtime_error("GetAllReserveKeyHashes(): read failed");
+        if (!walletdb.ReadPool(id, keypool)) {
+            throw std::runtime_error("GetAllReserveKeyHashes(): read failed");
+        }
         assert(keypool.vchPubKey.IsValid());
         CKeyID keyID = keypool.vchPubKey.GetID();
         setAddress.insert(keyID);
@@ -3744,7 +3745,7 @@ void CWallet::GetAllReserveKeys(std::set<CKeyID>& setAddress) const
     LoadReserveKeysToSet(setAddress, setInternalKeyPool, walletdb);
     LoadReserveKeysToSet(setAddress, setExternalKeyPool, walletdb);
 
-    for (const CKeyID& keyID, setAddress) {
+    for (const CKeyID& keyID : setAddress) {
         if (!HaveKey(keyID)) {
             throw std::runtime_error(std::string(__func__) + ": unknown key in key pool");
         }
@@ -4971,7 +4972,7 @@ bool CWallet::CreateZerocoinSpendTransaction(
             CBitcoinAddress destinationAddr;
             if (addressesTo.size() == 0) {
                 CPubKey pubkey;
-                assert(reserveKey.GetReservedKey(pubkey)); // should never fail
+                //assert(reserveKey.GetReservedKey(pubkey)); // should never fail
                 destinationAddr = CBitcoinAddress(pubkey.GetID());
                 addressesTo.push_back(std::make_pair(&destinationAddr, nValue));
             }
@@ -5692,12 +5693,6 @@ void CWallet::Inventory(const uint256& hash)
         if (mi != mapRequestCount.end())
             (*mi).second++;
     }
-}
-
-unsigned int CWallet::GetKeyPoolSize()
-{
-    AssertLockHeld(cs_wallet); // setKeyPool
-    return setKeyPool.size();
 }
 
 int CWallet::GetVersion()

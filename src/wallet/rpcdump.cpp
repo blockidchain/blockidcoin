@@ -368,7 +368,7 @@ UniValue dumphdinfo(const UniValue& params, bool fHelp)
     EnsureWalletIsUnlocked();
 
     if (fHelp || params.size() != 0)
-        throw runtime_error(
+        throw std::runtime_error(
             "dumphdinfo\n"
             "Returns an object containing sensitive private info about this HD wallet.\n"
             "\nResult:\n"
