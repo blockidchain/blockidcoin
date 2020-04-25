@@ -376,6 +376,13 @@ UniValue dumphdinfo(const UniValue& params, bool fHelp)
             "  \"hdseed\": \"seed\",                    (string) The HD seed (bip32, in hex)\n"
             "  \"mnemonic\": \"words\",                 (string) The mnemonic for this HD wallet (bip39, english words) \n"
             "  \"mnemonicpassphrase\": \"passphrase\",  (string) The mnemonic passphrase for this HD wallet (bip39)\n"
+            "    \"hdaccounts\": [\n"
+            "      {\n"
+            "      \"hdaccountindex\": xxx,         (numeric) the index of the account\n"
+            "      \"extpubkey\": xxxx,    (string) Account Extended Public Key\n"
+            "      }\n"
+            "      ,...\n"
+            "    ]\n"
             "}\n"
             "\nExamples:\n"
             + HelpExampleCli("dumphdinfo", "")
@@ -402,6 +409,32 @@ UniValue dumphdinfo(const UniValue& params, bool fHelp)
         obj.push_back(Pair("mnemonic", ssMnemonic.c_str()));
         obj.push_back(Pair("mnemonicpassphrase", ssMnemonicPassphrase.c_str()));
 
+        SecureVector vchSeed = hdChainCurrent.GetSeed();
+        CExtKey masterKey;
+        CExtKey purposeKey;             //key at m/purpose'
+        CExtKey cointypeKey;            //key at m/purpose'/coin_type'
+
+        masterKey.SetMaster(&vchSeed[0], vchSeed.size());
+        masterKey.Derive(purposeKey, 44 | 0x80000000);
+        purposeKey.Derive(cointypeKey, Params().ExtCoinType() | 0x80000000);
+
+        UniValue accounts(UniValue::VARR);
+        for (int i = 0; i < hdChainCurrent.CountAccounts(); ++i)
+        {
+          CExtKey accountKey;             //key at m/purpose'/coin_type'/account'
+          cointypeKey.Derive(accountKey, i | 0x80000000);
+
+          CExtPubKey extpubkey;
+          extpubkey = accountKey.Neuter();
+          CBitcoinExtPubKey b58extpubkey;
+          b58extpubkey.SetKey(extpubkey);
+
+          UniValue account(UniValue::VOBJ);
+          account.push_back(Pair("hdaccountindex", (int64_t)i));
+          account.push_back(Pair("extpubkey", b58extpubkey.ToString().c_str()));
+          accounts.push_back(account);
+        }
+        obj.push_back(Pair("hdaccounts", accounts));
         return obj;
     }
 
@@ -453,7 +486,7 @@ UniValue dumpwallet(const UniValue& params, bool fHelp)
     file << strprintf("# * Best block at time of backup was %i (%s),\n", chainActive.Height(), chainActive.Tip()->GetBlockHash().ToString());
     file << strprintf("#   mined on %s\n", EncodeDumpTime(chainActive.Tip()->GetBlockTime()));
     file << "\n";
-    
+
     // add the base58check encoded extended master if the wallet uses HD
     CHDChain hdChainCurrent;
     if (pwalletMain->GetHDChain(hdChainCurrent))
@@ -504,13 +537,15 @@ UniValue dumpwallet(const UniValue& params, bool fHelp)
         std::string strAddr = CBitcoinAddress(keyid).ToString();
         CKey key;
         if (pwalletMain->GetKey(keyid, key)) {
+            file << strprintf("%s %s ", CBitcoinSecret(key).ToString(), strTime);
             if (pwalletMain->mapAddressBook.count(keyid)) {
-                file << strprintf("%s %s label=%s # addr=%s\n", CBitcoinSecret(key).ToString(), strTime, EncodeDumpString(pwalletMain->mapAddressBook[keyid].name), strAddr);
+                file << strprintf("label=%s", EncodeDumpString(pwalletMain->mapAddressBook[keyid].name));
             } else if (setKeyPool.count(keyid)) {
-                file << strprintf("%s %s reserve=1 # addr=%s\n", CBitcoinSecret(key).ToString(), strTime, strAddr);
+                file << "reserve=1";
             } else {
-                file << strprintf("%s %s change=1 # addr=%s\n", CBitcoinSecret(key).ToString(), strTime, strAddr);
+                file << "change=1";
             }
+            file << strprintf(" # addr=%s%s\n", strAddr, (pwalletMain->mapHdPubKeys.count(keyid) ? " hdkeypath="+pwalletMain->mapHdPubKeys[keyid].GetKeyPath() : ""));
         }
     }
     file << "\n";
