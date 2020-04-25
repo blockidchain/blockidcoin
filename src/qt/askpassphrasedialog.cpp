@@ -188,11 +188,18 @@ void AskPassphraseDialog::accept()
         );
         if (ret) {
             if (newpass1 == newpass2) {
-                newpassCache = newpass1;
-                BlockidCoinGUI* window = static_cast<BlockidCoinGUI*>(parentWidget());
-                LoadingDialog *dialog = new LoadingDialog(window);
-                dialog->execute(this, 1);
-                openDialogWithOpaqueBackgroundFullScreen(dialog, window);
+                if (model->hdEnabled()) {
+                    newpassCache = newpass1;
+                    BlockidCoinGUI* window = static_cast<BlockidCoinGUI*>(parentWidget());
+                    LoadingDialog *dialog = new LoadingDialog(window);
+                    dialog->execute(this, 1);
+                    openDialogWithOpaqueBackgroundFullScreen(dialog, window);
+                } else {
+                    newpassCache = newpass1;
+                    BlockidCoinGUI* window = static_cast<BlockidCoinGUI*>(parentWidget());
+                    LoadingDialog *dialog = new LoadingDialog(window);
+                    dialog->execute(this, 1);
+                    openDialogWithOpaqueBackgroundFullScreen(dialog, window);
             } else {
                 QMessageBox::critical(this, tr("Wallet encryption failed"),
                     tr("The supplied passphrases do not match."));

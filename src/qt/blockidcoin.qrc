@@ -68,7 +68,9 @@
         <file alias="yesvote">res/icons/yesvote.png</file>
         <file alias="novote">res/icons/novote.png</file>
         <file alias="abstainvote">res/icons/abstainvote.png</file>
-        <file alias="onion">res/icons/onion.png</file>
+        <file alias="hd-enabled">res/icons/hd_enabled.png</file>
+        <file alias="hd-disabled">res/icons/hd_disabled.png</file>
+
     </qresource>
     <qresource prefix="/css">
         <file>res/css/default.css</file>

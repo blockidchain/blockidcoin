@@ -45,6 +45,7 @@ public slots:
     void setNumConnections(int count);
     void setNumBlocks(int count);
     void updateAutoMintStatus();
+    void setHDStatus(int hdEnabled);
     void setStakingStatusActive(bool fActive);
     void updateStakingStatus();
 

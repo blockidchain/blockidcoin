@@ -475,6 +475,32 @@ QPushButton[cssClass="btn-check-stack"]:checked {
     border-bottom:2px solid #6a93c9;
 }
 
+
+QPushButton[cssClass="btn-check-hd-wallet"] {
+    qproperty-icon: url("://hd-enabled");
+    qproperty-iconSize: 24px 24px;
+    color:#ffffff;
+    background-color:#1a5abadd;
+    border-bottom:2px solid #6a93c9;
+    border-radius:2px;
+}
+
+
+QPushButton[cssClass="btn-check-hd-wallet-inactive"] {
+    qproperty-icon: url("://hd-disabled");
+    qproperty-iconSize: 24px 24px;
+    color:#B2D9FF;
+    background-color:#3d4a59;
+    border-bottom:2px solid #18427c;
+    border-radius:2px;
+}
+
+
+QPushButton[cssClass="btn-check-hd-wallet"]:checked {
+    background-color:#1a5abadd;
+    color:#ffffff;
+    border-bottom:2px solid #6a93c9;
+}
 /*******************
 ******cold staking*********
  ********************/

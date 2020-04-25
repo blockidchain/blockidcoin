@@ -1107,6 +1107,11 @@ bool WalletModel::isUsed(CBitcoinAddress address)
     return wallet->IsUsed(address);
 }
 
+bool WalletModel::hdEnabled() const
+{
+    return wallet->IsHDEnabled();
+}
+
 std::string WalletModel::resetMintZerocoin(){
     return wallet->ResetMintZerocoin();
 }

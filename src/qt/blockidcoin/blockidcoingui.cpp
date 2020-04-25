@@ -602,7 +602,11 @@ bool BlockidCoinGUI::addWallet(const QString& name, WalletModel* walletModel)
     connect(settingsWidget, &SettingsWidget::message, this, &BlockidCoinGUI::message);
 
     // Pass through transaction notifications
-    connect(dashboard, SIGNAL(incomingTransaction(QString, int, CAmount, QString, QString)), this, SLOT(incomingTransaction(QString, int, CAmount, QString, QString)));
+    //connect(dashboard, SIGNAL(incomingTransaction(QString, int, CAmount, QString, QString)), this, SLOT(incomingTransaction(QString, int, CAmount, QString, QString)));
+    connect(dashboard, SIGNAL(incomingTransaction(QString,int,CAmount,QString,QString,QString)), this, SLOT(incomingTransaction(QString,int,CAmount,QString,QString,QString)));
+
+    // Connect HD enabled state signal
+    connect(dashboard, SIGNAL(hdEnabledStatusChanged(int)), this, SLOT(setHDStatus(int)));
 
     return true;
 }
