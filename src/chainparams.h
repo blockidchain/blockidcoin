@@ -85,6 +85,8 @@ public:
     int COINSTAKE_MIN_DEPTH() const { return nStakeMinDepth; }
     bool HasStakeMinAgeOrDepth(const int contextHeight, const uint32_t contextTime, const int utxoFromBlockHeight, const uint32_t utxoFromBlockTime) const;
 
+    int ExtCoinType() const { return nExtCoinType; }
+
     /** Time Protocol V2 **/
     int BlockStartTimeProtocolV2() const { return nBlockTimeProtocolV2; }
     bool IsTimeProtocolV2(const int nHeight) const { return nHeight >= BlockStartTimeProtocolV2(); }
@@ -192,6 +194,7 @@ protected:
     int nFutureTimeDriftPoW;
     int nFutureTimeDriftPoS;
     int nTimeSlotLength;
+    int nExtCoinType;
 
     int nModifierUpdateBlock;
     CAmount nMaxMoneyOut;
