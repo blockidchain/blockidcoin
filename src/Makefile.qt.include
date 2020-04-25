@@ -407,6 +407,8 @@ RES_ICONS = \
   qt/res/icons/yesvote.png \
   qt/res/icons/novote.png \
   qt/res/icons/abstainvote.png \
+  qt/res/icons/hd_disabled.png \
+  qt/res/icons/hd_enabled.png \
   qt/blockidcoin/res/img/bg-dashboard-banner.png \
   qt/blockidcoin/res/img/bg-multi-number-dark.svg \
   qt/blockidcoin/res/img/ic-check-locked.svg \
