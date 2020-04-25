@@ -226,7 +226,12 @@ struct CExtPubKey {
     void Decode(const unsigned char code[BIP32_EXTKEY_SIZE]);
     bool Derive(CExtPubKey& out, unsigned int nChild) const;
 
-    void Serialize(CSizeComputer& s) const
+    unsigned int GetSerializeSize(int nType, int nVersion) const
+    {
+        return BIP32_EXTKEY_SIZE+1; //add one byte for the size (compact int)
+    }
+
+    void Serialize(Stream& s, int nType, int nVersion) const
     {
         // Optimized implementation for ::GetSerializeSize that avoids copying.
         s.seek(BIP32_EXTKEY_SIZE + 1); // add one byte for the size (compact int)
@@ -241,7 +246,7 @@ struct CExtPubKey {
         s.write((const char *)&code[0], len);
     }
     template <typename Stream>
-    void Unserialize(Stream& s)
+    void Unserialize(Stream& s, int nType, int nVersion)
     {
         unsigned int len = ::ReadCompactSize(s);
         unsigned char code[BIP32_EXTKEY_SIZE];
