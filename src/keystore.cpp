@@ -148,3 +148,9 @@ bool CBasicKeyStore::GetKey(const CKeyID& address, CKey& keyOut) const
     }
     return false;
 }
+
+bool CBasicKeyStore::GetHDChain(CHDChain& hdChainRet) const
+{
+    hdChainRet = hdChain;
+    return !hdChain.IsNull();
+} 
