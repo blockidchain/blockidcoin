@@ -121,7 +121,7 @@ PairResult CWallet::getNewAddress(CBitcoinAddress& ret, const std::string addres
 
     CPubKey newKey;
     // Get a key
-    if (false) {
+   if (!pwalletMain->GetKeyFromPool(newKey, false)) {
         // inform the user to top-up the keypool or unlock the wallet
         return PairResult(false, new std::string(
                 "Keypool ran out, please call keypoolrefill first, or unlock the wallet."));
