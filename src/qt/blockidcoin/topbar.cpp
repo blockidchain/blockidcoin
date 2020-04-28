@@ -377,13 +377,13 @@ void TopBar::updateStakingStatus(){
 
 void TopBar::setHDStatus(int hdEnabled)
 {
-    if (ui->pushButtonHdWallet->isChecked() != hdEnabled) {
-        ui->pushButtonHdWallet->setButtonText(hdEnabled ? tr("HD key generation is <b>enabled</b>") : tr("HD key generation is <b>disabled</b>"));
+    //if (ui->pushButtonHdWallet->isChecked() != hdEnabled) {
+        ui->pushButtonHdWallet->setButtonText(hdEnabled ? tr("HD Wallet Keys Enabled") : tr("HD Wallet Keys Disabled"));
         ui->pushButtonHdWallet->setChecked(hdEnabled);
         ui->pushButtonHdWallet->setButtonClassStyle("cssClass", (hdEnabled ?
                                                                 "btn-check-hd-wallet" :
                                                                 "btn-check-hd-wallet-inactive"), true);
-    }
+    //}
 }
 
 void TopBar::setNumConnections(int count) {
@@ -498,11 +498,12 @@ void TopBar::loadWalletModel(){
             SLOT(updateBalances(CAmount, CAmount, CAmount, CAmount, CAmount, CAmount, CAmount, CAmount, CAmount, CAmount, CAmount)));
     connect(walletModel->getOptionsModel(), SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
     connect(walletModel, &WalletModel::encryptionStatusChanged, this, &TopBar::refreshStatus);
+    //connect(walletModel, SIGNAL(hdEnabledStatusChanged(int)), this, SLOT(setHDStatus(int)));
     // update the display unit, to not use the default ("BlockidCoin")
     updateDisplayUnit();
     
     // update HD status
-    Q_EMIT hdEnabledStatusChanged(walletModel->hdEnabled());
+    //Q_EMIT hdEnabledStatusChanged(walletModel->hdEnabled());
 
     refreshStatus();
     onColdStakingClicked();
@@ -536,6 +537,9 @@ void TopBar::refreshStatus(){
             break;
     }
     updateStyle(ui->pushButtonLock);
+
+    // Update HD wallet status
+    setHDStatus(walletModel->hdEnabled());
 }
 
 void TopBar::updateDisplayUnit()

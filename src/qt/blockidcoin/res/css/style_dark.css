@@ -554,7 +554,7 @@ QPushButton[cssClass="btn-check-stack"]:checked {
 /* HD WALLET ICON */
 
 QPushButton[cssClass="btn-check-hd-wallet"] {
-    qproperty-icon: url("://hd-enabled");
+    qproperty-icon: url(":/icons/hd-enabled");
     qproperty-iconSize: 24px 24px;
     color:#ffffff;
     background-color:#1a5abadd;
@@ -564,7 +564,7 @@ QPushButton[cssClass="btn-check-hd-wallet"] {
 
 
 QPushButton[cssClass="btn-check-hd-wallet-inactive"] {
-    qproperty-icon: url("://hd-disabled");
+    qproperty-icon: url(":/icons/hd-disabled");
     qproperty-iconSize: 24px 24px;
     color:#B2D9FF;
     background-color:#3d4a59;

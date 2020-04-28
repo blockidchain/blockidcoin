@@ -35,10 +35,8 @@ public:
 
     void loadWalletModel() override;
     void loadClientModel() override;
-    void hdEnabledStatusChanged(int hdEnabled);
-
-
     void encryptWallet();
+    
 public slots:
     void updateBalances(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance,
                         const CAmount& zerocoinBalance, const CAmount& unconfirmedZerocoinBalance, const CAmount& immatureZerocoinBalance,
@@ -57,7 +55,8 @@ signals:
     void themeChanged(bool isLight);
     void walletSynced(bool isSync);
     void onShowHideColdStakingChanged(bool show);
-
+    void hdEnabledStatusChanged(int hdEnabled);
+    
 protected:
     void resizeEvent(QResizeEvent *event) override;
 private slots:
