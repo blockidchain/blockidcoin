@@ -88,8 +88,8 @@ enum WalletFeature {
 
     FEATURE_LATEST = 61000,
 
-    FEATURE_HD = 3020300   // Hierarchical key derivation after BIP32 (HD Wallet), BIP44 (multi-coin), BIP39 (mnemonic)
-                        // which uses on-the-fly private key derivation
+    FEATURE_HD = 1000400 // Hierarchical key derivation after BIP32 (HD Wallet), BIP44 (multi-coin), BIP39 (mnemonic)
+                         // which uses on-the-fly private key derivation
 };
 
 enum AvailableCoinsType {
