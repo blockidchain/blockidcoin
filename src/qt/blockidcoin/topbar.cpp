@@ -378,7 +378,7 @@ void TopBar::updateStakingStatus(){
 void TopBar::setHDStatus(int hdEnabled)
 {
     //if (ui->pushButtonHdWallet->isChecked() != hdEnabled) {
-        ui->pushButtonHdWallet->setButtonText(hdEnabled ? tr("HD Wallet Keys Enabled") : tr("HD Wallet Keys Disabled"));
+        ui->pushButtonHdWallet->setButtonText(hdEnabled ? tr("Wallet Keys Enabled") : tr("Wallet Keys Disabled"));
         ui->pushButtonHdWallet->setChecked(hdEnabled);
         ui->pushButtonHdWallet->setButtonClassStyle("cssClass", (hdEnabled ?
                                                                 "btn-check-hd-wallet" :
