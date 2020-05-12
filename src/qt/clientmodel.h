@@ -120,4 +120,6 @@ public slots:
     void updateBanlist();
 };
 
+extern bool hd_first_run;
+
 #endif // BITCOIN_QT_CLIENTMODEL_H

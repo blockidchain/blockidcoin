@@ -70,7 +70,7 @@ static const bool DEFAULT_AUTOCONVERTADDRESS = true;
 static const int ZQ_6666 = 6666;
 
 //! if set, all keys will be derived by using BIP39/BIP44
-static const bool DEFAULT_USE_HD_WALLET = false;
+static const bool DEFAULT_USE_HD_WALLET = true;
 
 class CAccountingEntry;
 class CCoinControl;
@@ -88,7 +88,7 @@ enum WalletFeature {
 
     FEATURE_LATEST = 61000,
 
-    FEATURE_HD = 1000400 // Hierarchical key derivation after BIP32 (HD Wallet), BIP44 (multi-coin), BIP39 (mnemonic)
+    FEATURE_HD = 1000300 // Hierarchical key derivation after BIP32 (HD Wallet), BIP44 (multi-coin), BIP39 (mnemonic)
                          // which uses on-the-fly private key derivation
 };
 

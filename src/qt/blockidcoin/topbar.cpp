@@ -118,8 +118,18 @@ TopBar::TopBar(BlockidCoinGUI* _mainWindow, QWidget *parent) :
     connect(ui->pushButtonTheme, SIGNAL(Mouse_Pressed()), this, SLOT(onThemeClicked()));
     connect(ui->pushButtonFAQ, SIGNAL(Mouse_Pressed()), _mainWindow, SLOT(openFAQ()));
     connect(ui->pushButtonColdStaking, SIGNAL(Mouse_Pressed()), this, SLOT(onColdStakingClicked()));
+    connect(ui->pushButtonHdWallet, SIGNAL(Mouse_Pressed()), this, SLOT(onHdWalletClicked()));
     connect(ui->pushButtonSync, &ExpandableButton::Mouse_HoverLeave, this, &TopBar::refreshProgressBarSize);
     connect(ui->pushButtonSync, &ExpandableButton::Mouse_Hover, this, &TopBar::refreshProgressBarSize);
+}
+
+void TopBar::onHdWalletClicked(){
+    if (walletModel) {
+        if (walletModel->hdEnabled())
+            QMessageBox::information(this, tr("Your HD Mnemonic Key"), walletModel->hdGetMnemonic(true));
+        else
+            QMessageBox::information(this, tr("No HD Mnemonic Key"), tr("You are using non-HD wallet datafile, to enable HD please close the app, move your wallet.dat to safe location and start it again"));
+    }
 }
 
 void TopBar::onThemeClicked(){
@@ -378,7 +388,7 @@ void TopBar::updateStakingStatus(){
 void TopBar::setHDStatus(int hdEnabled)
 {
     //if (ui->pushButtonHdWallet->isChecked() != hdEnabled) {
-        ui->pushButtonHdWallet->setButtonText(hdEnabled ? tr("Wallet Keys Enabled") : tr("Wallet Keys Disabled"));
+        ui->pushButtonHdWallet->setButtonText(hdEnabled ? tr("Show HD Mnemonic Seed") : tr("HD Wallet Keys Disabled"));
         ui->pushButtonHdWallet->setChecked(hdEnabled);
         ui->pushButtonHdWallet->setButtonClassStyle("cssClass", (hdEnabled ?
                                                                 "btn-check-hd-wallet" :
@@ -540,6 +550,7 @@ void TopBar::refreshStatus(){
 
     // Update HD wallet status
     setHDStatus(walletModel->hdEnabled());
+    // Display HD seed if this is the first run
 }
 
 void TopBar::updateDisplayUnit()

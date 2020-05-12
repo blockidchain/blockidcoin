@@ -36,7 +36,8 @@ public:
     void loadWalletModel() override;
     void loadClientModel() override;
     void encryptWallet();
-    
+    void hdShowMnemonicSeed(bool firstRun);
+
 public slots:
     void updateBalances(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance,
                         const CAmount& zerocoinBalance, const CAmount& unconfirmedZerocoinBalance, const CAmount& immatureZerocoinBalance,
@@ -62,6 +63,7 @@ protected:
 private slots:
     void onBtnReceiveClicked();
     void onThemeClicked();
+    void onHdWalletClicked();
     void onBtnLockClicked();
     void lockDropdownMouseLeave();
     void lockDropdownClicked(const StateClicked&);

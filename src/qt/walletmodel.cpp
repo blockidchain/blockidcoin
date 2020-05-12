@@ -1112,6 +1112,23 @@ bool WalletModel::hdEnabled() const
     return wallet->IsHDEnabled();
 }
 
+QString WalletModel::hdGetMnemonic(bool firstRun)
+{
+    LOCK(wallet->cs_wallet);
+    QString result = "";
+    CHDChain hdChainCurrent;
+    if (wallet->IsHDEnabled() && wallet->GetHDChain(hdChainCurrent))
+    {
+        if (wallet->GetDecryptedHDChain(hdChainCurrent)) {
+          SecureString ssMnemonic;
+          SecureString ssMnemonicPassphrase;
+          hdChainCurrent.GetMnemonic(ssMnemonic, ssMnemonicPassphrase);
+  	  result = QString::fromLocal8Bit(ssMnemonic.c_str());
+        }
+    }
+    return result;
+}
+
 std::string WalletModel::resetMintZerocoin(){
     return wallet->ResetMintZerocoin();
 }

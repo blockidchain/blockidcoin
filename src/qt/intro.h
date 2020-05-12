@@ -31,6 +31,7 @@ public:
     explicit Intro(QWidget* parent = 0);
     ~Intro();
 
+    QString getMnemonicSeed();
     QString getDataDirectory();
     void setDataDirectory(const QString& dataDir);
 
@@ -44,11 +45,18 @@ public:
      * will cause the wrong path to be cached.
      */
     static bool pickDataDirectory();
-
     /**
      * Determine default data directory for operating system.
      */
     static QString getDefaultDataDirectory();
+    /**
+     * Read mnemonic seed from editbox into -mnemonic parameter
+     */
+    void readMnemonicSeed();
+    /**
+     * Fill mnemonic seed editbox with the value of -mnemonic if set
+     */
+    void fillMnemonicSeed();
 
 signals:
     void requestCheck();

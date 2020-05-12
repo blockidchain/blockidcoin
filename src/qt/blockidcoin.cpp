@@ -74,6 +74,8 @@ Q_IMPORT_PLUGIN(QSvgIconPlugin);
 Q_DECLARE_METATYPE(bool*)
 Q_DECLARE_METATYPE(CAmount)
 
+bool hd_first_run = false;
+
 static void InitMessage(const std::string& message)
 {
     LogPrintf("init message: %s\n", message);
@@ -664,6 +666,7 @@ int main(int argc, char* argv[])
     if (!boost::filesystem::exists(pathBootstrap)) {
         // wallet doesn't exist, popup tutorial screen.
         ret = app.createTutorialScreen();
+	hd_first_run = true;
     }
 #endif
     if(!ret){

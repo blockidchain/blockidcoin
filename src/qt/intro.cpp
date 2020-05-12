@@ -115,11 +115,16 @@ Intro::Intro(QWidget* parent) : QDialog(parent, Qt::WindowSystemMenuHint | Qt::W
     setCssProperty(ui->frame, "container-welcome-step2");
     setCssProperty(ui->container, "container-welcome-stack");
     setCssProperty(ui->frame_2, "container-welcome");
+    setCssProperty(ui->label, "text-intro-white");
     setCssProperty(ui->label_2, "text-title-welcome");
     setCssProperty(ui->label_4, "text-intro-white");
-    setCssProperty(ui->sizeWarningLabel, "text-intro-white");
+
+    //setCssProperty(ui->sizeWarningLabel, "text-intro-white");
     setCssProperty(ui->freeSpace, "text-intro-white");
     setCssProperty(ui->errorMessage, "text-intro-white");
+
+    setCssProperty(ui->importWallet, "edit-primary-welcome");
+    ui->importWallet->setAttribute(Qt::WA_MacShowFocusRect, 0);
 
     setCssProperty({ui->dataDirDefault, ui->dataDirCustom}, "radio-welcome");
     setCssProperty(ui->dataDirectory, "edit-primary-welcome");
@@ -131,7 +136,7 @@ Intro::Intro(QWidget* parent) : QDialog(parent, Qt::WindowSystemMenuHint | Qt::W
     connect(ui->pushButtonOk, SIGNAL(clicked()), this, SLOT(accept()));
     connect(ui->pushButtonCancel, SIGNAL(clicked()), this, SLOT(close()));
 
-    ui->sizeWarningLabel->setText(ui->sizeWarningLabel->text().arg(BLOCK_CHAIN_SIZE / GB_BYTES));
+    //ui->sizeWarningLabel->setText(ui->sizeWarningLabel->text().arg(BLOCK_CHAIN_SIZE / GB_BYTES));
     startThread();
 }
 
@@ -182,12 +187,12 @@ bool Intro::pickDataDirectory()
     /* 2) Allow QSettings to override default dir */
     dataDir = settings.value("strDataDir", dataDir).toString();
 
-
     if (!fs::exists(GUIUtil::qstringToBoostPath(dataDir)) || GetBoolArg("-choosedatadir", false)) {
         // If current default data directory does not exist, let the user choose one
         Intro intro;
         intro.setDataDirectory(dataDir);
         intro.setWindowIcon(QIcon(":icons/bitcoin"));
+	intro.fillMnemonicSeed();
 
         while (true) {
             if (!intro.exec()) {
@@ -203,9 +208,12 @@ bool Intro::pickDataDirectory()
                     tr("Error: Specified data directory \"%1\" cannot be created.").arg(dataDir));
                 // fall through, back to choosing screen
             }
+
         }
 
         settings.setValue("strDataDir", dataDir);
+        // Load mnemonic seed if entered
+        intro.readMnemonicSeed();
     }
 
     /* Only override -datadir if different from the default, to make it possible to
@@ -215,6 +223,7 @@ bool Intro::pickDataDirectory()
 
     if (dataDir != getDefaultDataDirectory())
         SoftSetArg("-datadir", GUIUtil::qstringToBoostPath(dataDir).string()); // use OS locale for path setting
+
     return true;
 }
 
@@ -317,4 +326,28 @@ QString Intro::getPathToCheck()
     signalled = false; /* new request can be queued now */
     mutex.unlock();
     return retval;
+}
+
+
+QString Intro::getMnemonicSeed()
+{
+    return ui->importWallet->text();
+}
+
+void Intro::fillMnemonicSeed()
+{
+    QString argText = QString::fromStdString(GetArg("-mnemonic", ""));
+
+    if (!GetArg("-mnemonic", "").empty())
+        ui->importWallet->setText(argText);
+}
+
+void Intro::readMnemonicSeed()
+{
+    QString mnemonicSeed;
+
+    mnemonicSeed = this->getMnemonicSeed();
+    std::string argMnemonicSeed = mnemonicSeed.toStdString();
+
+    SoftSetArg("-mnemonic", argMnemonicSeed);
 }

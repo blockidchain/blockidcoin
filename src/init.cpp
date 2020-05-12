@@ -1725,11 +1725,17 @@ bool AppInit2()
             pwalletMain->SetMaxVersion(nMaxVersion);
         }
 
+        bool fHasNewHDKey = false;
         if (fFirstRun) {
-
             if (GetBoolArg("-usehd", DEFAULT_USE_HD_WALLET) && !pwalletMain->IsHDEnabled()) {
                 if (GetArg("-mnemonicpassphrase", "").size() > 256)
                     return InitError(_("Mnemonic passphrase is too long, must be at most 256 characters"));
+
+                // remember whether to show it to the user to write it down, we need to check here as
+                // the command GenerateNewHDChain() will erase the -mnemonic parameter
+                if (GetArg("-mnemonic", "").empty())
+                    fHasNewHDKey = true;
+
                 // generate a new master key
                 pwalletMain->GenerateNewHDChain();
 
@@ -1740,15 +1746,15 @@ bool AppInit2()
             // Create new keyUser and set as default key
             CPubKey newDefaultKey;
             // Top up the keypool
-            if (!pwalletMain->TopUpKeyPool()) { // TODO: Baggins musime kuknut tento shiet s keys :D ! // if (pwalletMain->GetKeyFromPool(newDefaultKey, false))
+            if (!pwalletMain->TopUpKeyPool()) {
                 // Error generating keys
                 InitError(_("Unable to generate initial key") += "\n");
                 return error("%s %s", __func__ , "Unable to generate initial key");
             }
 
             pwalletMain->SetBestChain(chainActive.GetLocator());
-        }
-        else if (mapArgs.count("-usehd")) {
+
+        } else if (mapArgs.count("-usehd")) {
             bool useHD = GetBoolArg("-usehd", DEFAULT_USE_HD_WALLET);
             if (pwalletMain->IsHDEnabled() && !useHD)
                 return InitError(strprintf(_("Error loading %s: You can't disable HD on a already existing HD wallet"), strWalletFile));
@@ -1756,10 +1762,24 @@ bool AppInit2()
                 return InitError(strprintf(_("Error loading %s: You can't enable HD on a already existing non-HD wallet"), strWalletFile));
         }
 
-        // Warn user every time he starts non-encrypted HD wallet
-        if ((GetBoolArg("-usehd", DEFAULT_USE_HD_WALLET) || pwalletMain->IsHDEnabled()) && !pwalletMain->IsLocked()) {
+       if (fHasNewHDKey) {
+            // Show HD mnemonic for safekeeping
+            CHDChain hdChainCurrent;
+            if (pwalletMain->GetHDChain(hdChainCurrent))
+            {
+                if (!pwalletMain->GetDecryptedHDChain(hdChainCurrent))
+                    return error("%s %s", __func__ , "Cannot decrypt HD seed");
+
+                SecureString ssMnemonic;
+                SecureString ssMnemonicPassphrase;
+                hdChainCurrent.GetMnemonic(ssMnemonic, ssMnemonicPassphrase);
+                InitWarning(strprintf("IMPORTANT: This is your new mnemonic key to your HD wallet, please write it down and keep it SAFE:\r\n\r\n%s", ssMnemonic));
+           }
+        }
+        // Warn user every time he starts non-encrypted HD wallet (except the first one when he writes down the mnemonic)
+        else if ((GetBoolArg("-usehd", DEFAULT_USE_HD_WALLET) || pwalletMain->IsHDEnabled()) && !pwalletMain->IsLocked()) {
             InitWarning(_("Make sure to encrypt your wallet and delete all non-encrypted backups after you verified that wallet works!"));
-        }        
+        }
 
         LogPrintf("Init errors: %s\n", strErrors.str());
         LogPrintf("Wallet completed loading in %15dms\n", GetTimeMillis() - nWalletStartTime);
