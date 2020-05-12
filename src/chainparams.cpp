@@ -184,7 +184,7 @@ public:
         nTargetTimespan_V2 = 2 * nTimeSlotLength * 60;  // 30 minutes
         nMaturity = 100;
         nStakeMinAge = 60 * 60;                         // 1 hour
-        nStakeMinDepth = 600;
+        nStakeMinDepth = 200;
         nFutureTimeDriftPoW = 7200;
         nFutureTimeDriftPoS = 180;
         nMasternodeCountDrift = 20;
@@ -208,10 +208,10 @@ public:
         nBlockDoubleAccumulated = 1050010;
         nEnforceNewSporkKey = 1566860400; //!> Sporks signed after Monday, August 26, 2019 11:00:00 PM GMT must use the new spork key
         nRejectOldSporkKey = 4070908800; //!> Fully reject old spork key after Thursday, September 26, 2019 11:00:00 PM GMT
-        nBlockStakeModifierlV2 = 1566860400;
+        nBlockStakeModifierlV2 = 109800;
         nBIP65ActivationHeight = 855;
         // Activation height for TimeProtocolV2, Blocks V7 and newMessageSignatures
-        nBlockTimeProtocolV2 = 1566860400;
+        nBlockTimeProtocolV2 = 109802;
 
         // Public coin spend enforcement
         nPublicZCSpends = 15000000;
@@ -220,7 +220,7 @@ public:
         nBlockEnforceNewMessageSignatures = nBlockTimeProtocolV2;
 
         // Blocks v7
-        nBlockLastAccumulatorCheckpoint = 15000000;
+        nBlockLastAccumulatorCheckpoint = 109801;
         nBlockV7StartHeight = nBlockTimeProtocolV2;
 
         // Fake Serial Attack
