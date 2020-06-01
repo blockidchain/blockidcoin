@@ -38,18 +38,18 @@ CAmount CollateralRequired(int nHeight)
         nCollateralRequired = 1250 * COIN;
     } else if (nHeight <= 80000) {
         nCollateralRequired = 1500 * COIN;
-    } else if (nHeight <= 90000) {
-        nCollateralRequired = 1700 * COIN;
     } else if (nHeight <= 100000) {
-        nCollateralRequired = 1900 * COIN;
-    } else if (nHeight <= 110000) {
-        nCollateralRequired = 2000 * COIN;
+        nCollateralRequired = 1700 * COIN;
     } else if (nHeight <= 120000) {
+        nCollateralRequired = 1900 * COIN;
+    } else if (nHeight <= 140000) {
+        nCollateralRequired = 2000 * COIN;
+    } else if (nHeight <= 160000) {
         nCollateralRequired = 2500 * COIN;
-    } else if (nHeight <= 130000) {
-        nCollateralRequired = 4500 * COIN;
+    } else if (nHeight <= 200000) {
+        nCollateralRequired = 3500 * COIN;
     } else {
-        nCollateralRequired = 7000 * COIN;
+        nCollateralRequired = 5000 * COIN;
     }
 
     return nCollateralRequired;

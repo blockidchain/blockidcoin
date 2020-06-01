@@ -2028,18 +2028,18 @@ int64_t GetBlockValue(int nHeight)
         nSubsidy = 7 * COIN;
     } else if (nHeight > 70000 && nHeight <= 80000) {
         nSubsidy = 8.5 * COIN;
-    } else if (nHeight > 80000 && nHeight <= 90000) {
-        nSubsidy = 9.5 * COIN;
-    } else if (nHeight > 90000 && nHeight <= 100000) {
-        nSubsidy = 10.5 * COIN;
-    } else if (nHeight > 100000 && nHeight <= 110000) {
-        nSubsidy = 11.5 * COIN;
-    } else if (nHeight > 110000 && nHeight <= 120000) {
-        nSubsidy = 13 * COIN;
-    } else if (nHeight > 120000 && nHeight <= 130000) {
-        nSubsidy = 15 * COIN;
+    } else if (nHeight > 80000 && nHeight <= 100000) {
+        nSubsidy = 1.2 * COIN;
+    } else if (nHeight > 100000 && nHeight <= 120000) {
+        nSubsidy = 1.4 * COIN;
+    } else if (nHeight > 120000 && nHeight <= 140000) {
+        nSubsidy = 1.6 * COIN;
+    } else if (nHeight > 140000 && nHeight <= 160000) {
+        nSubsidy = 2.2 * COIN;
+    } else if (nHeight > 160000 && nHeight <= 200000) {
+        nSubsidy = 2.3 * COIN;
     } else {
-        nSubsidy = 20 * COIN;
+        nSubsidy = 3.5 * COIN;
     }
 
     // Check if we reached the coin max supply.
@@ -2078,20 +2078,20 @@ int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCou
         ret = 6.9999 * COIN;
     } else if (nHeight <= 80000 && nHeight > 70000) {
         ret = 8.4999 * COIN;
-    } else if (nHeight <= 90000 && nHeight > 80000) {
-        ret = 9.4999 * COIN;
-    } else if (nHeight <= 100000 && nHeight > 90000) {
-        ret = 10.4999 * COIN;
-    } else if (nHeight <= 110000 && nHeight > 100000) {
-        ret = 11.4999 * COIN;
-    } else if (nHeight <= 120000 && nHeight > 110000) {
-        ret = 12.9999 * COIN;
-    } else if (nHeight <= 130000 && nHeight > 120000) {
-        ret = 14.9999 * COIN;
-    } else if (nHeight > 130000) {
-        ret = 19.9999 * COIN;
+    } else if (nHeight <= 100000 && nHeight > 80000) {
+        ret = 1.1999 * COIN;
+    } else if (nHeight <= 120000 && nHeight > 100000) {
+        ret = 1.3999 * COIN;
+    } else if (nHeight <= 140000 && nHeight > 120000) {
+        ret = 1.5999 * COIN;
+    } else if (nHeight <= 160000 && nHeight > 140000) {
+        ret = 2.1999 * COIN;
+    } else if (nHeight <= 200000 && nHeight > 160000) {
+        ret = 2.2999 * COIN;
+    } else if (nHeight > 200000) {
+        ret = 3.4999 * COIN;
     } else {
-        ret = 19.9999 * COIN;
+        ret = 3.4999 * COIN;
     }
 
     return ret;
