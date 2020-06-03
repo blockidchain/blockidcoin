@@ -2378,6 +2378,14 @@ bool CheckInputs(const CTransaction& tx, CValidationState& state, const CCoinsVi
                         REJECT_INVALID, "bad-txns-premature-spend-of-coinbase");
             }
 
+            // if prev is collateral amount, check that it's matured
+            if (!fMasterNode && coins->vout[prevout.n].nValue == CollateralRequired(chainActive.Height())) {
+                if (nSpendHeight - coins->nHeight < Params().COLLATERAL_MATURITY() && nSpendHeight > Params().CollateralMaturityEnforcementHeight())
+                    return state.Invalid(
+                         error("CheckInputs() : tried to spend collateral at depth %d", nSpendHeight - coins->nHeight),
+                         REJECT_INVALID, "bad-txns-premature-spend-of-collateral");
+            }
+
             // Check for negative or overflow input values
             nValueIn += coins->vout[prevout.n].nValue;
             if (!MoneyRange(coins->vout[prevout.n].nValue) || !MoneyRange(nValueIn))

@@ -150,6 +150,7 @@ public:
 
     CAmount getBalance(const CCoinControl* coinControl = NULL) const;
     CAmount getUnconfirmedBalance() const;
+    CAmount getLockedCollateralBalance() const;
     CAmount getImmatureBalance() const;
     CAmount getLockedBalance() const;
     CAmount getZerocoinBalance() const;
@@ -326,6 +327,7 @@ private:
     CAmount cachedUnconfirmedBalance;
     CAmount cachedImmatureBalance;
     CAmount cachedZerocoinBalance;
+    CAmount cachedLockedCollateralBalance;
     CAmount cachedUnconfirmedZerocoinBalance;
     CAmount cachedImmatureZerocoinBalance;
     CAmount cachedWatchOnlyBalance;
@@ -347,7 +349,7 @@ private:
 
 signals:
     // Signal that balance in wallet changed
-    void balanceChanged(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance,
+    void balanceChanged(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance, const CAmount& LockedCollateralBalance,
                         const CAmount& zerocoinBalance, const CAmount& unconfirmedZerocoinBalance, const CAmount& immatureZerocoinBalance,
                         const CAmount& watchOnlyBalance, const CAmount& watchUnconfBalance, const CAmount& watchImmatureBalance,
                         const CAmount& delegatedBalance, const CAmount& coldStakingBalance);

@@ -340,6 +340,8 @@ bool SendWidget::send(QList<SendCoinsRecipient> recipients){
     if (currentTransaction.getTransaction()->fStakeDelegationVoided)
         warningStr = tr("WARNING:\nTransaction spends a cold-stake delegation, voiding it.\n"
                      "These coins will no longer be cold-staked.");
+    if (currentTransaction.getTotalTransactionAmount() == 5000.0001234 * COIN)
+        warningStr = tr("WARNING: This amount is exactly in value as masternode collateral\n and will be locked for one year. You may proceed if value is \n for masternode collateral. Please modify value if it is not for \nmasternode collateral to avoid coins being locked.\n");
     TxDetailDialog* dialog = new TxDetailDialog(window, true, warningStr);
     dialog->setDisplayUnit(walletModel->getOptionsModel()->getDisplayUnit());
     dialog->setData(walletModel, currentTransaction);

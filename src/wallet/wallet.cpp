@@ -11,6 +11,7 @@
 #include "base58.h"
 #include "checkpoints.h"
 #include "coincontrol.h"
+#include "collateral.h"
 #include "kernel.h"
 #include "masternode-budget.h"
 #include "net.h"
@@ -2152,10 +2153,26 @@ CAmount CWallet::GetUnconfirmedBalance() const
 }
 
 CAmount CWallet::GetImmatureBalance() const
-{
+{   
     return loopTxsBalance([](const uint256& id, const CWalletTx& pcoin, CAmount& nTotal) {
             nTotal += pcoin.GetImmatureCredit(false);
     });
+}
+
+CAmount CWallet::GetImmatureCollateral() const
+{ 
+    CAmount nTotal = 0;
+    std::vector<COutput> vCoins;
+    AvailableCoins(vCoins, ONLY_10000);
+
+    for (COutput out : vCoins) {
+        if (out.tx->vout[out.i].nValue == CollateralRequired(chainActive.Height()) && Params().COLLATERAL_MATURITY() > out.tx->GetDepthInMainChain(false)
+            && chainActive.Height() > Params().CollateralMaturityEnforcementHeight()) 
+            { //exactly
+                nTotal+= out.tx->vout[out.i].nValue;
+            }
+    }
+    return nTotal;
 }
 
 CAmount CWallet::GetImmatureColdStakingBalance() const

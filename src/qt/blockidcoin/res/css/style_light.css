@@ -2353,6 +2353,13 @@ HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH*/
     font-size:16px;
 }
 
+*[cssClass="text-warning-dialog"] {
+    color:red;
+    font-size:16px;
+    font-weight: bold;
+    text-align: left!important;
+}
+
 *[cssClass="text-title1-dialog"] {
     color:#707070;
     font-size:22px;

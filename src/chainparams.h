@@ -79,6 +79,8 @@ public:
 
     /** returns the coinbase maturity **/
     int COINBASE_MATURITY() const { return nMaturity; }
+    int COLLATERAL_MATURITY() const { return nCollateralMaturity; }
+    int CollateralMaturityEnforcementHeight() const { return nCollateralMaturityEnforcementHeight; }
 
     /** returns the coinstake maturity (min depth required) **/
     int COINSTAKE_MIN_AGE() const { return nStakeMinAge; }
@@ -189,6 +191,8 @@ protected:
     unsigned int nBlockidCoinBadBlocknBits;
     int nMasternodeCountDrift;
     int nMaturity;
+    int nCollateralMaturity;
+    int nCollateralMaturityEnforcementHeight;
     int nStakeMinDepth;
     int nStakeMinAge;
     int nFutureTimeDriftPoW;

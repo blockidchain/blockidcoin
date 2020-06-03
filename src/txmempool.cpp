@@ -7,6 +7,7 @@
 #include "txmempool.h"
 
 #include "clientversion.h"
+#include "collateral.h"
 #include "main.h"
 #include "streams.h"
 #include "util.h"
@@ -479,6 +480,14 @@ void CTxMemPool::removeCoinbaseSpends(const CCoinsViewCache* pcoins, unsigned in
             const CCoins* coins = pcoins->AccessCoins(txin.prevout.hash);
             if (fSanityCheck) assert(coins);
             if (!coins || ((coins->IsCoinBase() || coins->IsCoinStake()) && nMemPoolHeight - coins->nHeight < (unsigned)Params().COINBASE_MATURITY())) {
+                transactionsToRemove.push_back(tx);
+                break;
+            }
+            if (coins->vout[txin.prevout.n].nValue == CollateralRequired(chainActive.Height())
+                && nMemPoolHeight - coins->nHeight < Params().COLLATERAL_MATURITY()
+                && nMemPoolHeight > Params().CollateralMaturityEnforcementHeight())
+            {
+                LogPrintf("CTxMemPool immature collateral tx removed %s  \n", tx.GetHash().ToString().c_str());
                 transactionsToRemove.push_back(tx);
                 break;
             }

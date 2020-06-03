@@ -39,8 +39,7 @@ namespace GuiTransactionsUtils {
                 informType = CClientUIInterface::MSG_ERROR;
                 break;
             case WalletModel::TransactionCommitFailed:
-                retStr = parent->translate(
-                        "The transaction was rejected! This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.");
+                retStr = parent->translate("The transaction was rejected! This might happen if some of the coins in your wallet were already spent, or because one of the inputs includes time-locked Masternode collateral amount. First remove this invalid transaction go to Settings -> Debug -> Wallet Repair and click on Recover Transaction 1, then go to Send -> Coin Control, right-click on value of the collateral amount and choose Lock unspent. Then you can try to send your transaction again.");
                 informType = CClientUIInterface::MSG_ERROR;
                 break;
             case WalletModel::AnonymizeOnlyUnlocked:
