@@ -459,7 +459,7 @@ std::vector<COutput> CActiveMasternode::SelectCoinsMasternode()
     }
 
     // Retrieve all possible outputs
-    pwalletMain->AvailableCoins(vCoins, ONLY_10000);
+    pwalletMain->AvailableCoins(vCoins, true, NULL, false, ONLY_10000);
 
     // Lock MN coins from masternode.conf back if they where temporary unlocked
     if (!confLockedCoins.empty()) {
