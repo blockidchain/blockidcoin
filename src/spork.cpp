@@ -26,6 +26,7 @@ std::vector<CSporkDef> sporkDefs = {
     MAKE_SPORK_DEF(SPORK_16_ZEROCOIN_MAINTENANCE_MODE,      4070908800ULL), // OFF
     MAKE_SPORK_DEF(SPORK_17_COLDSTAKING_ENFORCEMENT,        750),           // active since the block 750
     MAKE_SPORK_DEF(SPORK_18_ZEROCOIN_PUBLICSPEND_V4,        4070908800ULL), // OFF
+    MAKE_SPORK_DEF(SPORK_19_DISABLE_COLLATERAL_LOCK,        0),             // OFF
 };
 
 CSporkManager sporkManager;
