@@ -2313,7 +2313,8 @@ void CWallet::AvailableCoins(
                         found = !IsValidCollateral(pcoin->vout[i].nValue, chainActive.Height()); // do not use Hot MN funds
                 } else if (nCoinType == ONLY_10000) {
                     found = IsValidCollateral(pcoin->vout[i].nValue, chainActive.Height());
-                } else if (IsValidCollateral(pcoin->vout[i].nValue, chainActive.Height()) && !sporkManager.IsSporkActive(SPORK_19_DISABLE_COLLATERAL_LOCK)
+                } else if (IsValidCollateral(pcoin->vout[i].nValue, chainActive.Height())
+                	&& chainActive.Height() < sporkManager.GetSporkValue(SPORK_19_DISABLE_COLLATERAL_LOCK)
                     && chainActive.Height() > Params().CollateralMaturityEnforcementHeight()
                     && nDepth < Params().COLLATERAL_MATURITY()) {
                     //LogPrintf("AvailableCoins MN reward: skip %d / %d / %d \n", nDepth, pcoin->vout[i].nValue, chainActive.Height());
